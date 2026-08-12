@@ -1,0 +1,4 @@
+.env
+node_modules/
+*.zip
+school-management-system-backup/

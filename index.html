@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+    <div class="header-avatar">🤖</div>
+
+    <div class="header-info">
+        <h1>AI Chatbot</h1>
+        <span class="online-status">🟢 Online & Ready to Help</span>
+    </div>
+</div>
+    <button id="clear-chat">Clear Chat</button>
+    <button id="theme-toggle">🌙 Dark Mode</button>
+    <button id="history-btn">🕘 Chat History</button>
+    <div id="chat-box"></div>
+
+    <div class="input-area">
+    <input type="text" id="user-input" placeholder="Type your message...">
+
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<div id ="typing" class="bot-message"style="display:none;">
+    AI is typing...
+</div>
+
+</div>
+<script src="script.js"></script>
+
+</body>
+</html>
