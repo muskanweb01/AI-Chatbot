@@ -76,12 +76,9 @@ async function sendMessage() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-
-// Make sendMessage available to HTML onclick
 window.sendMessage = sendMessage;
 
 
-// Page ready hone ke baad buttons setup karein
 document.addEventListener("DOMContentLoaded", function () {
 
     const input = document.getElementById("user-input");
@@ -89,11 +86,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const themeToggle = document.getElementById("theme-toggle");
     const historyBtn = document.getElementById("history-btn");
 
-    // Load saved chat
     loadChat();
 
-
-    // Enter key
     if (input) {
         input.addEventListener("keypress", function (event) {
             if (event.key === "Enter") {
@@ -102,8 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
-    // Clear Chat
     if (clearChat) {
         clearChat.addEventListener("click", function () {
 
@@ -116,8 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
-    // Dark / Light Mode
     if (themeToggle) {
         themeToggle.addEventListener("click", function () {
 
@@ -131,26 +121,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
     // Chat History
     if (historyBtn) {
         historyBtn.addEventListener("click", function () {
-
-            const savedChat = localStorage.getItem("chatHistory");
-            const chatBox = document.getElementById("chat-box");
-
-            if (savedChat && chatBox) {
-                chatBox.innerHTML = savedChat;
-            } else {
-                alert("No chat history found.");
-            }
+            loadChat();
         });
     }
 
 });
 
 
-// Copy AI Response
 async function copyResponse(button) {
 
     const responseText = button.previousElementSibling.innerText;
@@ -173,7 +153,6 @@ async function copyResponse(button) {
 window.copyResponse = copyResponse;
 
 
-// Save Chat
 function saveChat() {
 
     const chatBox = document.getElementById("chat-box");
@@ -187,7 +166,6 @@ function saveChat() {
 }
 
 
-// Load Chat
 function loadChat() {
 
     const savedChat = localStorage.getItem("chatHistory");
