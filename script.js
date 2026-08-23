@@ -2,13 +2,15 @@ async function sendMessage() {
     const input = document.getElementById("user-input");
     const chatBox = document.getElementById("chat-box");
 
+    if (!input || !chatBox) return;
+
     const userMessage = input.value.trim();
 
     if (!userMessage) return;
 
     chatBox.innerHTML += `<div class="user-message">${userMessage}</div>`;
 
-saveChat();
+    saveChat();
     input.value = "";
 
     chatBox.innerHTML += `
@@ -19,8 +21,10 @@ saveChat();
         </div>
     `;
 
+    chatBox.scrollTop = chatBox.scrollHeight;
+
     try {
-        const response = await fetch("http://localhost:3000/chat", {
+        const response = await fetch("/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -30,30 +34,34 @@ saveChat();
             })
         });
 
+        if (!response.ok) {
+            throw new Error("Server error: " + response.status);
+        }
+
         const data = await response.json();
 
         const typing = document.getElementById("typing");
         if (typing) typing.remove();
-chatBox.innerHTML += `
-    <div class="bot-message">
-        <div class="bot-header">
-            <span class="bot-avatar">🤖</span>
-            <span class="bot-name">AI Assistant</span>
-        </div>
 
-        <div class="bot-text">${data.reply}</div>
+        chatBox.innerHTML += `
+            <div class="bot-message">
+                <div class="bot-header">
+                    <span class="bot-avatar">🤖</span>
+                    <span class="bot-name">AI Assistant</span>
+                </div>
 
-        <button class="copy-btn" onclick="copyResponse(this)">
-            📋 Copy
-        </button>
-    </div>
-`;
+                <div class="bot-text">${data.reply}</div>
 
-        // Save chat after AI response
+                <button class="copy-btn" onclick="copyResponse(this)">
+                    📋 Copy
+                </button>
+            </div>
+        `;
+
         saveChat();
 
     } catch (error) {
-        console.error(error);
+        console.error("Chat Error:", error);
 
         const typing = document.getElementById("typing");
         if (typing) typing.remove();
@@ -74,67 +82,90 @@ chatBox.innerHTML += `
 // Enter key
 const input = document.getElementById("user-input");
 
-input.addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        sendMessage();
-    }
-});
+if (input) {
+    input.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
+}
 
 
 // Clear Chat
 const clearChat = document.getElementById("clear-chat");
 
-clearChat.addEventListener("click", function() {
-    document.getElementById("chat-box").innerHTML = "";
-});
+if (clearChat) {
+    clearChat.addEventListener("click", function() {
+        const chatBox = document.getElementById("chat-box");
+
+        if (chatBox) {
+            chatBox.innerHTML = "";
+            localStorage.removeItem("chatHistory");
+        }
+    });
+}
 
 
 // Dark / Light Mode
 const themeToggle = document.getElementById("theme-toggle");
 
-themeToggle.addEventListener("click", function() {
-    document.body.classList.toggle("dark-mode");
+if (themeToggle) {
+    themeToggle.addEventListener("click", function() {
 
-    if (document.body.classList.contains("dark-mode")) {
-        themeToggle.innerHTML = "☀️ Light Mode";
-    } else {
-        themeToggle.innerHTML = "🌙 Dark Mode";
-    }
-});
+        document.body.classList.toggle("dark-mode");
+
+        if (document.body.classList.contains("dark-mode")) {
+            themeToggle.innerHTML = "☀️ Light Mode";
+        } else {
+            themeToggle.innerHTML = "🌙 Dark Mode";
+        }
+    });
+}
 
 
 // Copy AI Response
 async function copyResponse(button) {
+
     const responseText = button.previousElementSibling.innerText;
 
-    await navigator.clipboard.writeText(responseText);
+    try {
+        await navigator.clipboard.writeText(responseText);
 
-    button.innerText = "✅ Copied!";
+        button.innerText = "✅ Copied!";
 
-    setTimeout(() => {
-        button.innerText = "📋 Copy";
-    }, 1500);
+        setTimeout(() => {
+            button.innerText = "📋 Copy";
+        }, 1500);
+
+    } catch (error) {
+        console.error("Copy failed:", error);
+    }
 }
 
 
 // Save Chat
 function saveChat() {
-    const chatBox=
-    document.getElementById("chat-box");
 
-    localStorage.setItem("chatHistory",
-    chatBox.innerHTML);
-    console.log("chat saved");
-    
+    const chatBox = document.getElementById("chat-box");
+
+    if (!chatBox) return;
+
+    localStorage.setItem(
+        "chatHistory",
+        chatBox.innerHTML
+    );
 }
 
 
 // Load Chat
 function loadChat() {
+
     const savedChat = localStorage.getItem("chatHistory");
 
-    if (savedChat) {
-        document.getElementById("chat-box").innerHTML = savedChat;
+    const chatBox = document.getElementById("chat-box");
+
+    if (savedChat && chatBox) {
+        chatBox.innerHTML = savedChat;
     }
 }
 
@@ -146,12 +177,18 @@ loadChat();
 // Chat History Button
 const historyBtn = document.getElementById("history-btn");
 
-historyBtn.addEventListener("click", function() {
-    const savedChat = localStorage.getItem("chatHistory");
+if (historyBtn) {
 
-    if (savedChat) {
-        document.getElementById("chat-box").innerHTML = savedChat;
-    } else {
-        alert("No chat history found.");
-    }
-});
+    historyBtn.addEventListener("click", function() {
+
+        const savedChat = localStorage.getItem("chatHistory");
+
+        const chatBox = document.getElementById("chat-box");
+
+        if (savedChat && chatBox) {
+            chatBox.innerHTML = savedChat;
+        } else {
+            alert("No chat history found.");
+        }
+    });
+}
