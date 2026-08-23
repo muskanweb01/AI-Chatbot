@@ -19,7 +19,7 @@ export default async function handler(req, res) {
           content: message,
         },
       ],
-      model: "llama-3.1-8b-instant",
+      model: "openai/gpt-oss-120b",
     });
 
     const reply = chatCompletion.choices[0].message.content;
