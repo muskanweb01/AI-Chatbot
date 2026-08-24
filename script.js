@@ -88,6 +88,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadChat();
 
+
+    // Enter key
     if (input) {
         input.addEventListener("keypress", function (event) {
             if (event.key === "Enter") {
@@ -96,6 +98,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+
+    // Clear Chat
     if (clearChat) {
         clearChat.addEventListener("click", function () {
 
@@ -103,11 +107,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (chatBox) {
                 chatBox.innerHTML = "";
-                localStorage.removeItem("chatHistory");
             }
+
+            // History ko delete nahi karna
         });
     }
 
+
+    // Dark / Light Mode
     if (themeToggle) {
         themeToggle.addEventListener("click", function () {
 
@@ -121,16 +128,27 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+
     // Chat History
     if (historyBtn) {
         historyBtn.addEventListener("click", function () {
-            loadChat();
+
+            const savedChat = localStorage.getItem("chatHistory");
+            const chatBox = document.getElementById("chat-box");
+
+            if (savedChat && chatBox) {
+                chatBox.innerHTML = savedChat;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } else {
+                alert("No chat history found.");
+            }
         });
     }
 
 });
 
 
+// Copy AI Response
 async function copyResponse(button) {
 
     const responseText = button.previousElementSibling.innerText;
@@ -153,19 +171,22 @@ async function copyResponse(button) {
 window.copyResponse = copyResponse;
 
 
+// Save Chat
 function saveChat() {
 
     const chatBox = document.getElementById("chat-box");
 
     if (!chatBox) return;
 
-    localStorage.setItem(
-        "chatHistory",
-        chatBox.innerHTML
-    );
+    const chatContent = chatBox.innerHTML.trim();
+
+    if (chatContent) {
+        localStorage.setItem("chatHistory", chatContent);
+    }
 }
 
 
+// Load Chat
 function loadChat() {
 
     const savedChat = localStorage.getItem("chatHistory");
@@ -173,5 +194,6 @@ function loadChat() {
 
     if (savedChat && chatBox) {
         chatBox.innerHTML = savedChat;
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 }
